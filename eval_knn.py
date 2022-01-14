@@ -223,3 +223,5 @@ if __name__ == '__main__':
                 test_features, test_labels, k, args.temperature)
             print(f"{k}-NN classifier result: Top1: {top1}, Top5: {top5}")
     dist.barrier()
+
+# python -m torch.distributed.launch --nproc_per_node=8 eval_knn.py --pretrained_weights /cache/data/checkpoint0100.pth --checkpoint_key teacher --data_path /cache/data/

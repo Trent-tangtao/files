@@ -1,0 +1,2 @@
+polyaxon upload
+polyaxon run

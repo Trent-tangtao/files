@@ -1,0 +1,43 @@
+version: 1
+kind: experiment
+framework: pytorch
+build:
+  dockerfile: Dockerfile
+environment:
+  tolerations:
+    - key: dedicated
+      operator: Equal
+      value: nv3090
+      effect: NoSchedule
+    - key: dm.ai/zone
+      operator: Equal
+      value: gz2
+      effect: NoSchedule
+  node_selector:
+    dm.ai/gpu: nv3090
+    # dm.ai/gpu: 2080ti
+    # dm.ai/zone: gz2
+  affinity:
+    nodeAffinity:
+      requiredDuringSchedulingIgnoredDuringExecution:
+        nodeSelectorTerms:
+          - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: NotIn
+                values:
+                  - node47.atp
+                  - node55.atp
+                  - node50.atp
+                  - node5.atp
+                  - node18.atp
+#  node_selector:
+#    dm.ai/zone: gz1
+  resources:
+    gpu:
+      requests: 4
+      limits: 4
+run:
+  cmd: bash atp_run.sh
+  # cmd: python -m torch.distributed.launch --nproc_per_node=4  --master_port=29500 evaluation/classification_layer_decay/run_class_finetuning.py --finetune base-300-backbone_weights.pth --model vit_small --epochs 200 --warmup_epochs 20 --layer_decay 0.75 --mixup 0.8 --cutmix 1.0 --layer_scale_init_value 0.0 --disable_rel_pos_bias --abs_pos_emb --use_cls --imagenet_default_mean_and_std --output_dir finetune-300-base --data_path /data/ImageNet --batch_size 256
+
+

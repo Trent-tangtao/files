@@ -8,6 +8,21 @@ python3 -m torch.distributed.launch --nproc_per_node=8 \
                 --work-dir coco_det_test\
                 --deterministic \
                 --cfg-options model.backbone.use_checkpoint=True \
+                data.samples_per_gpu=4 \
+                lr_config.step=8,11 \
+                runner.max_epochs=12 \
+                optimizer.paramwise_cfg.layer_decay_rate=0.8\
+                model.pretrained=/mnt/data1/tangtao/ibot/backbone_weights.pth
+
+
+python3 -m torch.distributed.launch --nproc_per_node=8 \
+                --master_port=29500 \
+                evaluation/object_detection/train.py \
+                evaluation/object_detection/configs/cascade_rcnn/vit_small_giou_4conv1f_coco_3x.py \
+                --launcher pytorch \
+                --work-dir coco_det_test\
+                --deterministic \
+                --cfg-options model.backbone.use_checkpoint=True \
                 model.pretrained=/mnt/data1/tangtao/ibot/backbone_weights.pth
 
 python3 -m torch.distributed.launch --nproc_per_node=8 \
